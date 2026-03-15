@@ -1,0 +1,25 @@
+{
+  "name": "@vox-pilot/hands",
+  "version": "0.1.0",
+  "description": "MCP server that gives AI hands — mouse, keyboard, scroll, and file operations",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "vox-pilot-hands": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["mcp", "mouse", "keyboard", "automation", "ai-agent", "voice-control"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^4.3.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@vox-pilot/screen",
+  "version": "0.1.0",
+  "description": "MCP server that gives AI eyes — screenshots, window detection, and screen reading",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "vox-pilot-screen": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "mcp",
+    "screenshot",
+    "screen-capture",
+    "ai-agent",
+    "voice-control"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "screenshot-desktop": "^1.15.0",
+    "zod": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/screenshot-desktop": "^1.15.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0"
+  }
+}

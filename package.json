@@ -1,0 +1,22 @@
+{
+  "name": "vox-pilot-monorepo",
+  "private": true,
+  "description": "Your voice flies your desktop. AI-powered voice control for PC operations via MCP.",
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "eslint packages/*/src/**/*.ts",
+    "typecheck": "pnpm -r typecheck",
+    "clean": "pnpm -r clean"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^10.0.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.0"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
+}
