@@ -1,14 +1,7 @@
-import { execSync } from "node:child_process";
+import { runPSEncodedVoid } from "./powershell.js";
 
-function runPS(script: string): void {
-  execSync(
-    `powershell -NoProfile -ExecutionPolicy Bypass -Command "${script.replace(/"/g, '\\"')}"`,
-    { timeout: 5000 }
-  );
-}
-
-const MOUSE_SETUP = `
-Add-Type @'
+const MOUSE_CS = `
+Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
 public class MouseOps {
@@ -21,45 +14,56 @@ public class MouseOps {
   public const uint MOUSEEVENTF_WHEEL = 0x0800;
   public const uint MOUSEEVENTF_HWHEEL = 0x1000;
 }
-'@
+"@
 `;
 
 export async function mouseClick(x: number, y: number): Promise<void> {
-  runPS(
-    `${MOUSE_SETUP}; [MouseOps]::SetCursorPos(${x},${y}); [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTDOWN,0,0,0,[IntPtr]::Zero); [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTUP,0,0,0,[IntPtr]::Zero)`
-  );
+  runPSEncodedVoid(`${MOUSE_CS}
+[MouseOps]::SetCursorPos(${x},${y})
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTDOWN,0,0,0,[IntPtr]::Zero)
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTUP,0,0,0,[IntPtr]::Zero)
+`);
 }
 
 export async function mouseDoubleClick(x: number, y: number): Promise<void> {
-  runPS(
-    `${MOUSE_SETUP}; [MouseOps]::SetCursorPos(${x},${y}); [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTDOWN,0,0,0,[IntPtr]::Zero); [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTUP,0,0,0,[IntPtr]::Zero); Start-Sleep -Milliseconds 50; [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTDOWN,0,0,0,[IntPtr]::Zero); [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTUP,0,0,0,[IntPtr]::Zero)`
-  );
+  runPSEncodedVoid(`${MOUSE_CS}
+[MouseOps]::SetCursorPos(${x},${y})
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTDOWN,0,0,0,[IntPtr]::Zero)
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTUP,0,0,0,[IntPtr]::Zero)
+Start-Sleep -Milliseconds 50
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTDOWN,0,0,0,[IntPtr]::Zero)
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_LEFTUP,0,0,0,[IntPtr]::Zero)
+`);
 }
 
 export async function mouseRightClick(x: number, y: number): Promise<void> {
-  runPS(
-    `${MOUSE_SETUP}; [MouseOps]::SetCursorPos(${x},${y}); [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_RIGHTDOWN,0,0,0,[IntPtr]::Zero); [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_RIGHTUP,0,0,0,[IntPtr]::Zero)`
-  );
+  runPSEncodedVoid(`${MOUSE_CS}
+[MouseOps]::SetCursorPos(${x},${y})
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_RIGHTDOWN,0,0,0,[IntPtr]::Zero)
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_RIGHTUP,0,0,0,[IntPtr]::Zero)
+`);
 }
 
 export async function mouseScroll(
   direction: string,
   amount: number
 ): Promise<void> {
-  const wheelDelta = 120; // Standard wheel delta
+  const wheelDelta = 120;
   if (direction === "up" || direction === "down") {
     const delta = direction === "up" ? wheelDelta * amount : -wheelDelta * amount;
-    runPS(
-      `${MOUSE_SETUP}; [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_WHEEL,0,0,${delta},[IntPtr]::Zero)`
-    );
+    runPSEncodedVoid(`${MOUSE_CS}
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_WHEEL,0,0,${delta},[IntPtr]::Zero)
+`);
   } else {
     const delta = direction === "right" ? wheelDelta * amount : -wheelDelta * amount;
-    runPS(
-      `${MOUSE_SETUP}; [MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_HWHEEL,0,0,${delta},[IntPtr]::Zero)`
-    );
+    runPSEncodedVoid(`${MOUSE_CS}
+[MouseOps]::mouse_event([MouseOps]::MOUSEEVENTF_HWHEEL,0,0,${delta},[IntPtr]::Zero)
+`);
   }
 }
 
 export async function mouseMove(x: number, y: number): Promise<void> {
-  runPS(`${MOUSE_SETUP}; [MouseOps]::SetCursorPos(${x},${y})`);
+  runPSEncodedVoid(`${MOUSE_CS}
+[MouseOps]::SetCursorPos(${x},${y})
+`);
 }

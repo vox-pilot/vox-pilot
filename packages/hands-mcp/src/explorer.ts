@@ -1,14 +1,16 @@
 import { execSync } from "node:child_process";
+import { runPSEncoded } from "./powershell.js";
 
 export async function openPath(path: string): Promise<void> {
-  // Use explorer.exe to open files/folders with the default application
   const normalized = path.replace(/\//g, "\\");
   execSync(`explorer.exe "${normalized}"`, { timeout: 5000 });
 }
 
 export async function focusWindow(name: string): Promise<string> {
-  const psScript = `
-Add-Type @'
+  const escaped = name.replace(/'/g, "''").replace(/"/g, '""');
+
+  const script = `
+Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,14 +41,11 @@ public class WinFocus {
     return found;
   }
 }
-'@
-[WinFocus]::Focus('${name.replace(/'/g, "''")}')
-  `;
+"@
+Write-Output ([WinFocus]::Focus('${escaped}'))
+`;
 
-  const result = execSync(
-    `powershell -NoProfile -ExecutionPolicy Bypass -Command "${psScript.replace(/"/g, '\\"').replace(/\n/g, " ")}"`,
-    { encoding: "utf-8", timeout: 5000 }
-  ).trim();
+  const result = runPSEncoded(script);
 
   if (result) {
     return `Focused window: ${result}`;

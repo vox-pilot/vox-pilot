@@ -12,11 +12,69 @@ import {
 } from "./mouse.js";
 import { typeText, pressKey, hotkey } from "./keyboard.js";
 import { openPath, focusWindow } from "./explorer.js";
+import { performActions } from "./actions.js";
 
 const server = new McpServer({
   name: "vox-pilot-hands",
-  version: "0.1.0",
+  version: "0.2.0",
 });
+
+// === Compound action tool (recommended for multi-step GUI operations) ===
+
+const ActionSchema = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("focus"), window: z.string().describe("Window title or partial match") }),
+  z.object({ action: z.literal("click"), x: z.number(), y: z.number() }),
+  z.object({ action: z.literal("double_click"), x: z.number(), y: z.number() }),
+  z.object({ action: z.literal("right_click"), x: z.number(), y: z.number() }),
+  z.object({
+    action: z.literal("scroll"),
+    direction: z.enum(["up", "down", "left", "right"]),
+    amount: z.number().default(3),
+  }),
+  z.object({ action: z.literal("type"), text: z.string().describe("Text to type (supports Unicode/Japanese)") }),
+  z.object({ action: z.literal("key"), key: z.string().describe("Special key: Enter, Tab, Escape, Up, Down, F1-F12, etc.") }),
+  z.object({ action: z.literal("hotkey"), keys: z.array(z.string()).describe('e.g. ["ctrl", "c"]') }),
+  z.object({ action: z.literal("wait"), ms: z.number().default(300) }),
+]);
+
+server.tool(
+  "perform_actions",
+  {
+    actions: z
+      .array(ActionSchema)
+      .describe(
+        "Sequential actions to perform in a single process. Use this instead of individual tools when you need multiple steps (e.g., focus window + click + type). All actions run in one process so window focus is preserved between steps."
+      ),
+    delay_between_ms: z
+      .number()
+      .default(200)
+      .describe("Delay between each action in milliseconds"),
+  },
+  async ({ actions, delay_between_ms }) => {
+    const result = await performActions(actions, delay_between_ms);
+    if (result.error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error: ${result.error}\nCompleted before error: ${result.completed.join(", ") || "none"}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+    return {
+      content: [
+        {
+          type: "text",
+          text: `All ${actions.length} actions completed:\n${result.completed.join("\n")}`,
+        },
+      ],
+    };
+  }
+);
+
+// === Individual tools (for simple single-step operations) ===
 
 // Mouse operations
 server.tool(
@@ -95,7 +153,7 @@ server.tool(
 server.tool(
   "type_text",
   {
-    text: z.string().describe("Text to type"),
+    text: z.string().describe("Text to type (supports Unicode/Japanese)"),
   },
   async ({ text }) => {
     await typeText(text);
