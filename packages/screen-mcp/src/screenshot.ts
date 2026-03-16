@@ -1,8 +1,8 @@
-import { execSync } from "node:child_process";
 import { readFileSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
+import { runPSEncoded } from "./powershell.js";
 
 function captureToPng(
   x: number,
@@ -11,6 +11,7 @@ function captureToPng(
   height: number
 ): string {
   const tmpFile = join(tmpdir(), `vox-pilot-${randomUUID()}.png`);
+  const escapedPath = tmpFile.replace(/\\/g, "\\\\");
 
   const psScript = `
 Add-Type -AssemblyName System.Windows.Forms
@@ -18,15 +19,12 @@ Add-Type -AssemblyName System.Drawing
 $bitmap = New-Object System.Drawing.Bitmap(${width}, ${height})
 $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
 $graphics.CopyFromScreen(${x}, ${y}, 0, 0, [System.Drawing.Size]::new(${width}, ${height}))
-$bitmap.Save('${tmpFile.replace(/\\/g, "\\\\")}', [System.Drawing.Imaging.ImageFormat]::Png)
+$bitmap.Save('${escapedPath}', [System.Drawing.Imaging.ImageFormat]::Png)
 $graphics.Dispose()
 $bitmap.Dispose()
 `;
 
-  execSync(
-    `powershell -NoProfile -ExecutionPolicy Bypass -Command "${psScript.replace(/"/g, '\\"').replace(/\n/g, " ")}"`,
-    { timeout: 10000 }
-  );
+  runPSEncoded(psScript, 10000);
 
   const buffer = readFileSync(tmpFile);
   try {
@@ -38,10 +36,11 @@ $bitmap.Dispose()
 }
 
 function getScreenSize(): { width: number; height: number } {
-  const output = execSync(
-    'powershell -NoProfile -ExecutionPolicy Bypass -Command "[System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width.ToString() + \',\' + [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height.ToString()"',
-    { encoding: "utf-8", timeout: 5000 }
-  ).trim();
+  const script = `
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width.ToString() + ',' + [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height.ToString()
+`;
+  const output = runPSEncoded(script, 5000);
   const [w, h] = output.split(",").map(Number);
   return { width: w, height: h };
 }
