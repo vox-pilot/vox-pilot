@@ -1,6 +1,6 @@
 # Vox Pilot — Session Handoff
 
-Last updated: 2026-03-17
+Last updated: 2026-03-18
 
 ## Project Summary
 
@@ -38,19 +38,27 @@ Last updated: 2026-03-17
 - Lint fix: removed unused imports in setup-cli (`existsSync`, `readFileSync`)
 - All gates passed: build / lint / typecheck / test (7/7)
 
-### Not Yet Tested via MCP
-- screenshot through MCP (tested directly, not via MCP server)
-- list_windows through MCP
-- perform_actions through MCP (tested via Node.js script, not MCP)
-- Japanese input through MCP
+### Chunk 3: Human MCP Testing (2026-03-18)
+- All individual tools tested via MCP and PASS:
+  - `list_windows`, `get_window_info`, `screenshot`, `screenshot_region`
+  - `type_text` (ASCII + Japanese), `press_key`, `hotkey`
+  - `mouse_move`, `mouse_click`, `mouse_scroll`, `focus_window`
+- Bugs found and fixed:
+  - **`perform_actions` BOM bug**: temp .ps1 files written without UTF-8 BOM caused PowerShell parse errors when script contained Japanese text + SendKeys `{ENTER}`
+  - **`open_path` exit code bug**: `explorer.exe` returns non-zero even on success; `execSync` threw
+- `screenshot` cold-start can timeout on first MCP call (PowerShell + .NET init)
+- `perform_actions` fix requires MCP server restart to take effect (pending verification)
+
+### Not Yet Verified
+- `perform_actions` via MCP after server restart (BOM fix applied but not live-tested)
 
 ## Next Steps (Priority Order)
 
 1. ~~**PR to main**~~ — **完了** (PR #1 merged 2026-03-17)
-2. **Human test via MCP** ← **次はここから** — Claude Code セッションで実際に MCP 経由テスト:
-   - `screenshot` / `list_windows` / `perform_actions` / Japanese `type_text`
-3. **Fix issues from MCP testing** (if any)
-4. **README translations** — Japanese (`docs/README.ja.md`) + Chinese (`docs/README.zh-CN.md`)
+2. ~~**Human test via MCP**~~ — **完了** (Chunk 3, 2026-03-18)
+3. ~~**Fix issues from MCP testing**~~ — **完了** (2 bugs fixed, PR #2 pending)
+4. **Verify `perform_actions`** ← **次はここから** — MCP サーバー再起動後に BOM 修正を検証
+5. **README translations** — Japanese (`docs/README.ja.md`) + Chinese (`docs/README.zh-CN.md`)
 5. **Demo video** — scenario script + recording
 6. **npm publish** — `@vox-pilot/screen`, `@vox-pilot/hands`, `vox-pilot`
 7. **awesome-mcp-servers PR** — main distribution channel (81k stars)
