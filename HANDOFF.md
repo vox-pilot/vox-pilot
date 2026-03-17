@@ -32,9 +32,11 @@ Last updated: 2026-03-17
   - maxBuffer fix for screenshot base64 output (ENOBUFS)
   - `.gitignore` updated with `tmp_*` pattern
 
-### Branch: `codex/20260317-perf-test-stabilize`
-- Commit: `af3fbdd` — fix: stabilize perf tests with cold/warm separation and maxBuffer
-- Status: pushed, ready for PR to main
+### PR #1 — merged to main
+- Branch: `codex/20260317-perf-test-stabilize` → merged via PR #1
+- Final commit on main: `92463da`
+- Lint fix: removed unused imports in setup-cli (`existsSync`, `readFileSync`)
+- All gates passed: build / lint / typecheck / test (7/7)
 
 ### Not Yet Tested via MCP
 - screenshot through MCP (tested directly, not via MCP server)
@@ -44,8 +46,8 @@ Last updated: 2026-03-17
 
 ## Next Steps (Priority Order)
 
-1. **PR to main** — create PR from `codex/20260317-perf-test-stabilize`, run lint/typecheck, merge
-2. **Human test via MCP** — start new Claude Code session, test:
+1. ~~**PR to main**~~ — **完了** (PR #1 merged 2026-03-17)
+2. **Human test via MCP** ← **次はここから** — Claude Code セッションで実際に MCP 経由テスト:
    - `screenshot` / `list_windows` / `perform_actions` / Japanese `type_text`
 3. **Fix issues from MCP testing** (if any)
 4. **README translations** — Japanese (`docs/README.ja.md`) + Chinese (`docs/README.zh-CN.md`)
