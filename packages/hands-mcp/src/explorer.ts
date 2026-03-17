@@ -3,7 +3,11 @@ import { runPSEncoded } from "./powershell.js";
 
 export async function openPath(path: string): Promise<void> {
   const normalized = path.replace(/\//g, "\\");
-  execSync(`explorer.exe "${normalized}"`, { timeout: 5000 });
+  try {
+    execSync(`explorer.exe "${normalized}"`, { timeout: 5000, stdio: "ignore" });
+  } catch {
+    // explorer.exe may return non-zero even on success (e.g., when delegating to existing process)
+  }
 }
 
 export async function focusWindow(name: string): Promise<string> {
