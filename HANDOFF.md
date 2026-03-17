@@ -26,6 +26,15 @@ Last updated: 2026-03-17
   - Japanese mojibake → `SendInput` + `KEYEVENTF_UNICODE` (replaces SendKeys)
 - MCP servers registered globally (`claude mcp add --scope user`)
 - Automated tests passing (focus_window, perform_actions)
+- **Performance tests stabilized** (`tests/perf-3s.test.ts`, 7 tests all PASS):
+  - Cold-start gate (6s deadline): bounds first PowerShell/.NET init penalty
+  - Warm tests (3s deadline): mouse_click, press_key, list_windows, 3-step actions, 5-step actions, screenshot
+  - maxBuffer fix for screenshot base64 output (ENOBUFS)
+  - `.gitignore` updated with `tmp_*` pattern
+
+### Branch: `codex/20260317-perf-test-stabilize`
+- Commit: `af3fbdd` — fix: stabilize perf tests with cold/warm separation and maxBuffer
+- Status: pushed, ready for PR to main
 
 ### Not Yet Tested via MCP
 - screenshot through MCP (tested directly, not via MCP server)
@@ -35,13 +44,18 @@ Last updated: 2026-03-17
 
 ## Next Steps (Priority Order)
 
-1. **Human test via MCP** — start new Claude Code session, test:
+1. **PR to main** — create PR from `codex/20260317-perf-test-stabilize`, run lint/typecheck, merge
+2. **Human test via MCP** — start new Claude Code session, test:
    - `screenshot` / `list_windows` / `perform_actions` / Japanese `type_text`
-2. **Fix issues from MCP testing** (if any)
-3. **README translations** — Japanese (`docs/README.ja.md`) + Chinese (`docs/README.zh-CN.md`)
-4. **Demo video** — scenario script + recording
-5. **npm publish** — `@vox-pilot/screen`, `@vox-pilot/hands`, `vox-pilot`
-6. **awesome-mcp-servers PR** — main distribution channel (81k stars)
+3. **Fix issues from MCP testing** (if any)
+4. **README translations** — Japanese (`docs/README.ja.md`) + Chinese (`docs/README.zh-CN.md`)
+5. **Demo video** — scenario script + recording
+6. **npm publish** — `@vox-pilot/screen`, `@vox-pilot/hands`, `vox-pilot`
+7. **awesome-mcp-servers PR** — main distribution channel (81k stars)
+
+## Future Optimization (Out of Scope)
+- **Persistent PowerShell Session**: Replace `execSync` with `child_process.spawn` for a long-lived PS process. Would reduce all calls from ~4-5s cold / ~1-2s warm to ~100-500ms.
+- **powershell.ts deduplication**: `hands-mcp` and `screen-mcp` have identical copies.
 
 ## Key Files
 
