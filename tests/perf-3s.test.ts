@@ -38,7 +38,7 @@ function runPS(script: string, timeout = 10000): string {
   }
   const tmpFile = join(tmpdir(), `vox-test-${randomUUID()}.ps1`);
   try {
-    writeFileSync(tmpFile, script, { encoding: "utf-8" });
+    writeFileSync(tmpFile, "\uFEFF" + script, { encoding: "utf-8" });
     return execSync(
       `powershell -NoProfile -ExecutionPolicy Bypass -File "${tmpFile}"`,
       { encoding: "utf-8", timeout, maxBuffer },
@@ -59,7 +59,7 @@ function runPSVoid(script: string, timeout = 10000): void {
   }
   const tmpFile = join(tmpdir(), `vox-test-${randomUUID()}.ps1`);
   try {
-    writeFileSync(tmpFile, script, { encoding: "utf-8" });
+    writeFileSync(tmpFile, "\uFEFF" + script, { encoding: "utf-8" });
     execSync(
       `powershell -NoProfile -ExecutionPolicy Bypass -File "${tmpFile}"`,
       { timeout },

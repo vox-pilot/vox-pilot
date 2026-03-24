@@ -111,7 +111,7 @@ const KEY_MAP: Record<string, string> = {
   space: " ",
 };
 
-function buildActionPS(action: Action): string {
+export function buildActionPS(action: Action): string {
   switch (action.action) {
     case "focus":
       return `$r = [WinFocus]::Focus('${(action.window ?? "").replace(/'/g, "''")}')
@@ -197,10 +197,10 @@ export interface ActionResult {
   error?: string;
 }
 
-export async function performActions(
+export function buildPerformActionsScript(
   actions: Action[],
   delayBetweenMs: number
-): Promise<ActionResult> {
+): string {
   // Build a single PowerShell script with all actions
   const parts: string[] = [ALL_CS_TYPES];
 
@@ -212,7 +212,14 @@ export async function performActions(
     }
   }
 
-  const script = parts.join("\n");
+  return parts.join("\n");
+}
+
+export async function performActions(
+  actions: Action[],
+  delayBetweenMs: number
+): Promise<ActionResult> {
+  const script = buildPerformActionsScript(actions, delayBetweenMs);
 
   try {
     const output = runPSEncoded(script, 30000);
