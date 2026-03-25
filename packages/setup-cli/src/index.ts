@@ -18,13 +18,13 @@ When Vox Pilot is \`OFF\`:
 - Do not use desktop control tools.
 - Do not take screenshots.
 - Do not click, type, scroll, open paths, or switch windows.
-- If the user asks for desktop control, first ask them to say \`ボックスパイロット開始\`.
+- If the user asks for desktop control, first ask them to say \`\u30DC\u30C3\u30AF\u30B9\u30D1\u30A4\u30ED\u30C3\u30C8\u958B\u59CB\`.
 
 ## Start Command
 
 If the user says one of the following, switch Vox Pilot to \`ON\` for the current chat:
 
-- \`ボックスパイロット開始\`
+- \`\u30DC\u30C3\u30AF\u30B9\u30D1\u30A4\u30ED\u30C3\u30C8\u958B\u59CB\`
 - \`Vox Pilot start\`
 - \`desktop control start\`
 
@@ -34,7 +34,7 @@ After switching to \`ON\`, reply briefly that desktop control is now enabled.
 
 If the user says one of the following, switch Vox Pilot to \`OFF\` for the current chat:
 
-- \`ボックスパイロット終了\`
+- \`\u30DC\u30C3\u30AF\u30B9\u30D1\u30A4\u30ED\u30C3\u30C8\u7D42\u4E86\`
 - \`Vox Pilot stop\`
 - \`desktop control stop\`
 
@@ -96,15 +96,30 @@ function detectPlatform(): "claude-code" | "codex" | "unknown" {
   return "unknown";
 }
 
+function addMcpServer(command: string): void {
+  try {
+    const output = execSync(command, { encoding: "utf-8" });
+    if (output.trim()) {
+      console.log(output.trim());
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const stdout = typeof error === "object" && error && "stdout" in error ? String((error as { stdout?: unknown }).stdout ?? "") : "";
+    const stderr = typeof error === "object" && error && "stderr" in error ? String((error as { stderr?: unknown }).stderr ?? "") : "";
+    const combined = `${message}\n${stdout}\n${stderr}`;
+    if (combined.includes("already exists in local config")) {
+      console.log("MCP server already exists in local config, skipping.");
+      return;
+    }
+    throw error;
+  }
+}
+
 function setupClaudeCode(): void {
   console.log("Setting up Vox Pilot for Claude Code...");
 
-  execSync("claude mcp add vox-pilot-screen -- npx @vox-pilot/screen", {
-    stdio: "inherit",
-  });
-  execSync("claude mcp add vox-pilot-hands -- npx @vox-pilot/hands", {
-    stdio: "inherit",
-  });
+  addMcpServer("claude mcp add vox-pilot-screen -- npx @vox-pilot/screen");
+  addMcpServer("claude mcp add vox-pilot-hands -- npx @vox-pilot/hands");
 
   const skillDir = join(homedir(), ".claude", "skills", "vox-pilot");
   mkdirSync(skillDir, { recursive: true });
@@ -114,21 +129,17 @@ function setupClaudeCode(): void {
   console.log("Claude Code skill installed.");
   console.log("");
   console.log("Daily use:");
-  console.log('  1. Open Claude Code');
-  console.log('  2. Say "ボックスパイロット開始"');
-  console.log('  3. Give desktop commands');
-  console.log('  4. Say "ボックスパイロット終了" when done');
+  console.log("  1. Open Claude Code");
+  console.log('  2. Say "Vox Pilot start" or "desktop control start"');
+  console.log("  3. Give desktop commands");
+  console.log('  4. Say "Vox Pilot stop" or "desktop control stop" when done');
 }
 
 function setupCodex(): void {
   console.log("Setting up Vox Pilot for Codex...");
 
-  execSync("codex mcp add vox-pilot-screen -- npx @vox-pilot/screen", {
-    stdio: "inherit",
-  });
-  execSync("codex mcp add vox-pilot-hands -- npx @vox-pilot/hands", {
-    stdio: "inherit",
-  });
+  addMcpServer("codex mcp add vox-pilot-screen -- npx @vox-pilot/screen");
+  addMcpServer("codex mcp add vox-pilot-hands -- npx @vox-pilot/hands");
 
   console.log("MCP servers registered.");
   console.log("");
