@@ -1,5 +1,7 @@
 # Vox Pilot
 
+> **⚠️ ARCHIVED** — This project is no longer actively developed. The voice-driven desktop control space now has mature alternatives including Windows Voice Access, DecisionsAI, and Claude Voice + Computer Use API. The MCP tools (screen/hands) remain functional and are used by other skills.
+
 **Your voice flies your desktop.**
 
 Vox Pilot lets AI agents see your screen and control your Windows PC.
