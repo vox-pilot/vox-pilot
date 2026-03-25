@@ -4,9 +4,9 @@ CLI installer for Vox Pilot.
 
 ## What it does
 
-- Detects supported AI agent setups
 - Registers the `@vox-pilot/screen` and `@vox-pilot/hands` MCP servers
-- Helps bootstrap local usage from one command
+- Installs the Claude Code skill for `ボックスパイロット開始` / `ボックスパイロット終了`
+- Keeps desktop control `OFF` by default for each new Claude chat
 
 ## Install
 
@@ -14,8 +14,9 @@ CLI installer for Vox Pilot.
 npx vox-pilot
 ```
 
-## Notes
+## Daily Use With Claude Code
 
-- Meant for initial setup and registration
-- Works together with the `@vox-pilot/*` packages in this monorepo
-
+1. Open Claude Code
+2. Say `ボックスパイロット開始`
+3. Give desktop commands
+4. Say `ボックスパイロット終了` when done

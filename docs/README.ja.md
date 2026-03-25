@@ -5,114 +5,99 @@
 
 **Your voice flies your desktop.**
 
-Vox Pilot は、AI coding agents（Claude Code, Codex）に PC を操作するための目と手を与える MCP ツールキットです。画面の確認、クリック、入力、スクロール、ファイル操作を自然言語から実行できます。
+Vox Pilot は、AI が Windows の画面を見たり、クリックしたり、文字を入力したりできるようにする道具です。
 
-## できること
+## すごく簡単にいうと
 
-AI agent に話しかけると、PC を操作します。
+役割はこうです。
 
-```text
-You:    "Open my Documents folder and find the latest spreadsheet"
-Agent:  *opens Explorer -> navigates -> finds file* "Found Q1_Report.xlsx, want me to open it?"
+- 音声入力ソフト: あなたの声を文字にする
+- Claude Code: その文字を読んで考える
+- Vox Pilot: 画面を見たり、マウスやキーボードを動かす
 
-You:    "Scroll down on this page and click the Sign Up button"
-Agent:  *takes screenshot -> scrolls -> identifies button -> clicks*
+## 最初の設定は1回だけ
 
-You:    "Switch to Chrome and open a new tab"
-Agent:  *focuses Chrome -> Ctrl+T*
-```
-
-## Quick Start
+最初に1回だけ、これを実行します。
 
 ```bash
 npx vox-pilot
 ```
 
-このコマンドは、使用中の AI agent（Claude Code または Codex）を自動検出し、MCP servers を登録します。
+これで Claude Code または Codex に Vox Pilot を登録します。
 
-### Manual Setup
+Claude Code では、あわせて安全用の skill も入ります。
 
-<details>
-<summary>Claude Code</summary>
+- 新しい会話では、最初は `OFF`
+- `ボックスパイロット開始` と言うと操作開始
+- `ボックスパイロット終了` と言うと操作停止
+
+つまり、Claude Code を閉じてまた開いても、毎回最初から設定し直す必要はありません。
+
+## Claude Code での使い方
+
+1. Claude Code を開く
+2. `ボックスパイロット開始` と言う
+3. そのあと普通に指示する
+
+```text
+Downloads フォルダを開いて
+この画面を下にスクロールして
+メモ帳にこんにちはと入力して
+```
+
+4. 終わりたいときは、こう言う
+
+```text
+ボックスパイロット終了
+```
+
+これで、その会話ではデスクトップ操作をやめます。
+
+## 手動で登録する方法
+
+### Claude Code
 
 ```bash
 claude mcp add vox-pilot-screen -- npx @vox-pilot/screen
 claude mcp add vox-pilot-hands -- npx @vox-pilot/hands
 ```
 
-</details>
-
-<details>
-<summary>Codex</summary>
+### Codex
 
 ```bash
 codex mcp add vox-pilot-screen -- npx @vox-pilot/screen
 codex mcp add vox-pilot-hands -- npx @vox-pilot/hands
 ```
 
-</details>
-
-## MCP Tools
+## 使える主な道具
 
 ### Screen (`@vox-pilot/screen`)
 
-| Tool | Description |
-|------|-------------|
-| `screenshot` | 画面全体をキャプチャ |
-| `screenshot_region` | 指定範囲をキャプチャ |
-| `list_windows` | 開いているウィンドウを列挙 |
-| `get_window_info` | ウィンドウ名から詳細を取得 |
+- `screenshot`
+- `screenshot_region`
+- `list_windows`
+- `get_window_info`
 
 ### Hands (`@vox-pilot/hands`)
 
-| Tool | Description |
-|------|-------------|
-| `mouse_click` | 指定座標を左クリック |
-| `mouse_double_click` | ダブルクリック |
-| `mouse_right_click` | 右クリック（コンテキストメニュー） |
-| `mouse_scroll` | 任意方向にスクロール |
-| `mouse_move` | カーソルを移動 |
-| `type_text` | テキストを入力 |
-| `press_key` | 特殊キーを押す |
-| `hotkey` | キーの組み合わせを送る |
-| `open_path` | Explorer でファイル / フォルダを開く |
-| `focus_window` | ウィンドウをタイトルで切り替える |
+- `mouse_click`
+- `mouse_double_click`
+- `mouse_right_click`
+- `mouse_scroll`
+- `mouse_move`
+- `type_text`
+- `press_key`
+- `hotkey`
+- `open_path`
+- `focus_window`
+- `perform_actions`
 
-## Voice Input
-
-Vox Pilot は任意の voice-to-text input と組み合わせて使えます。
-
-- **Windows Voice Typing**（Win+H）- 標準搭載、無料
-- **AquaVoice** - 高精度な音声入力
-- **Typeless** - AI ベースの dictation
-- その他の speech-to-text ツールでも可
-
-自然に話すだけで、AI agent が意図を理解します。
-
-## How It Works
-
-```text
-Voice Input (any STT) -> Text
-    ->
-AI Agent (Claude Code / Codex)
-    ->
-Vox Pilot MCP Servers
-    -> Screen: captures what's on screen
-    -> Hands: clicks, types, scrolls, opens files
-```
-
-AI agent は screenshot で画面を見て、native OS APIs を通じて PC を操作します。browser extension は不要で、任意のアプリケーションで使えます。
-
-## Requirements
+## 必要なもの
 
 - Node.js 20+
-- Windows 10/11（macOS support coming）
+- Windows 10/11
 - Claude Code または Codex CLI
-
-## Contributing
-
-See the original [Contributing section](../README.md#contributing).
 
 ## License
 
-See the original [License section](../README.md#license).
+元の [License section](../README.md#license) を参照してください。

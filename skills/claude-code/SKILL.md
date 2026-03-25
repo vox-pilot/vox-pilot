@@ -1,40 +1,75 @@
----
-name: vox-pilot
-description: Voice/text-driven desktop control — see the screen, click, type, scroll, open files
----
+# Vox Pilot - Claude Code Skill
 
-You have access to desktop control tools via Vox Pilot MCP servers. Use them to interact with the user's PC.
+Vox Pilot gives Claude Code desktop control tools.
 
-## Workflow
+## Default Mode
 
-1. **See first**: Always `screenshot` before acting to understand current screen state
-2. **Plan**: Describe what you're about to do before doing it
-3. **Act**: Use mouse/keyboard/file tools to execute
-4. **Verify**: Take another screenshot to confirm the result
+Desktop control starts in `OFF` mode for every new chat.
 
-## Available Tools
+When Vox Pilot is `OFF`:
 
-### Screen (via vox-pilot-screen MCP)
-- `screenshot` — Capture full screen
-- `screenshot_region` — Capture specific area (x, y, width, height)
-- `list_windows` — List all open windows with positions
-- `get_window_info` — Get details of a specific window
+- Do not use desktop control tools.
+- Do not take screenshots.
+- Do not click, type, scroll, open paths, or switch windows.
+- If the user asks for desktop control, first ask them to say `ボックスパイロット開始`.
 
-### Hands (via vox-pilot-hands MCP)
-- `mouse_click(x, y)` — Left click
-- `mouse_double_click(x, y)` — Double click (open files, etc.)
-- `mouse_right_click(x, y)` — Right click (context menu)
-- `mouse_scroll(direction, amount)` — Scroll up/down/left/right
-- `mouse_move(x, y)` — Move cursor
-- `type_text(text)` — Type text at current cursor
-- `press_key(key)` — Press special key (Enter, Tab, Escape, etc.)
-- `hotkey(keys)` — Key combination (["ctrl", "c"] for Ctrl+C)
-- `open_path(path)` — Open file/folder in Explorer or default app
-- `focus_window(name)` — Bring window to front by title
+## Start Command
+
+If the user says one of the following, switch Vox Pilot to `ON` for the current chat:
+
+- `ボックスパイロット開始`
+- `Vox Pilot start`
+- `desktop control start`
+
+After switching to `ON`, reply briefly that desktop control is now enabled.
+
+## Stop Command
+
+If the user says one of the following, switch Vox Pilot to `OFF` for the current chat:
+
+- `ボックスパイロット終了`
+- `Vox Pilot stop`
+- `desktop control stop`
+
+After switching to `OFF`, reply briefly that desktop control is now disabled.
+
+## When ON
+
+Use Vox Pilot MCP tools to help the user operate the PC.
+
+### Safe Workflow
+
+1. Use `screenshot` first to understand the current screen.
+2. Explain what you are about to do.
+3. Use the smallest set of actions needed.
+4. Take another screenshot when verification matters.
+
+### Available Tools
+
+Screen tools:
+
+- `screenshot`
+- `screenshot_region`
+- `list_windows`
+- `get_window_info`
+
+Hands tools:
+
+- `mouse_click`
+- `mouse_double_click`
+- `mouse_right_click`
+- `mouse_scroll`
+- `mouse_move`
+- `type_text`
+- `press_key`
+- `hotkey`
+- `open_path`
+- `focus_window`
+- `perform_actions`
 
 ## Rules
 
-- Respond in the user's language
-- Confirm before destructive actions (closing unsaved files, deleting)
-- If a click target is small or ambiguous, zoom in with `screenshot_region` first
-- Chain multiple actions for complex tasks (e.g., "open folder → find file → open it")
+- Respond in the user's language.
+- Confirm destructive actions before executing them.
+- If a target is small or ambiguous, inspect it first with `screenshot_region`.
+- Prefer `perform_actions` for multi-step flows.
