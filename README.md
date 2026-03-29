@@ -1,121 +1,102 @@
-# 🛫 Vox Pilot
+# Vox Pilot
+
+> **⚠️ ARCHIVED** — This project is no longer actively developed. The voice-driven desktop control space now has mature alternatives including Windows Voice Access, DecisionsAI, and Claude Voice + Computer Use API. The MCP tools (screen/hands) remain functional and are used by other skills.
 
 **Your voice flies your desktop.**
 
-Vox Pilot gives AI coding agents (Claude Code, Codex) eyes and hands to control your PC. See the screen, click, type, scroll, open files — all through natural language.
+Vox Pilot lets AI agents see your screen and control your Windows PC.
 
-https://github.com/user-attachments/assets/placeholder-demo-video
+## Simple Idea
 
-## What it does
+Think of it like this:
 
-Talk to your AI agent and it operates your computer:
+- Your voice input tool turns speech into text.
+- Claude Code reads that text.
+- Vox Pilot is the part that can look at the screen and use the mouse and keyboard.
 
-```
-You:    "Open my Documents folder and find the latest spreadsheet"
-Agent:  *opens Explorer → navigates → finds file* "Found Q1_Report.xlsx, want me to open it?"
+## One-Time Setup
 
-You:    "Scroll down on this page and click the Sign Up button"
-Agent:  *takes screenshot → scrolls → identifies button → clicks*
-
-You:    "Switch to Chrome and open a new tab"
-Agent:  *focuses Chrome → Ctrl+T*
-```
-
-## Quick Start
+Run this once:
 
 ```bash
 npx vox-pilot
 ```
 
-This auto-detects your AI agent (Claude Code or Codex) and registers the MCP servers.
+That registers the MCP servers for Claude Code or Codex.
 
-### Manual Setup
+For Claude Code, it also installs a simple safety skill:
 
-<details>
-<summary>Claude Code</summary>
+- Vox Pilot starts in `OFF` mode in each new chat.
+- Say `ボックスパイロット開始` to enable desktop control.
+- Say `ボックスパイロット終了` to disable desktop control.
+
+So you do **not** need to set everything up again every time you restart Claude Code.
+
+## Manual Setup
+
+### Claude Code
 
 ```bash
 claude mcp add vox-pilot-screen -- npx @vox-pilot/screen
 claude mcp add vox-pilot-hands -- npx @vox-pilot/hands
 ```
 
-</details>
-
-<details>
-<summary>Codex</summary>
+### Codex
 
 ```bash
 codex mcp add vox-pilot-screen -- npx @vox-pilot/screen
 codex mcp add vox-pilot-hands -- npx @vox-pilot/hands
 ```
 
-</details>
+## Daily Use With Claude Code
 
-## MCP Tools
+1. Open Claude Code.
+2. Say `ボックスパイロット開始`.
+3. Give desktop commands like:
+
+```text
+Downloads フォルダを開いて
+この画面を少し下にスクロールして
+Notepad にこんにちはと入力して
+```
+
+4. When you want to stop desktop control, say:
+
+```text
+ボックスパイロット終了
+```
+
+After that, Claude Code should stop using desktop control tools until you start it again.
+
+## Tools
 
 ### Screen (`@vox-pilot/screen`)
 
-| Tool | Description |
-|------|-------------|
-| `screenshot` | Capture full screen |
-| `screenshot_region` | Capture specific area |
-| `list_windows` | List all open windows |
-| `get_window_info` | Get window details by name |
+- `screenshot`
+- `screenshot_region`
+- `list_windows`
+- `get_window_info`
 
 ### Hands (`@vox-pilot/hands`)
 
-| Tool | Description |
-|------|-------------|
-| `mouse_click` | Left click at coordinates |
-| `mouse_double_click` | Double click |
-| `mouse_right_click` | Right click (context menu) |
-| `mouse_scroll` | Scroll in any direction |
-| `mouse_move` | Move cursor |
-| `type_text` | Type text |
-| `press_key` | Press special keys (Enter, Tab, etc.) |
-| `hotkey` | Key combinations (Ctrl+C, Alt+Tab, etc.) |
-| `open_path` | Open file/folder in Explorer |
-| `focus_window` | Switch to a window by title |
-
-## Voice Input
-
-Vox Pilot works with any voice-to-text input:
-
-- **Windows Voice Typing** (Win+H) — Built-in, free
-- **AquaVoice** — High accuracy voice input
-- **Typeless** — AI-powered dictation
-- Or any other speech-to-text tool
-
-Just speak naturally — the AI agent understands your intent.
-
-## How It Works
-
-```
-Voice Input (any STT) → Text
-    ↓
-AI Agent (Claude Code / Codex)
-    ↓
-Vox Pilot MCP Servers
-    ├── Screen: captures what's on screen
-    └── Hands: clicks, types, scrolls, opens files
-```
-
-The AI agent sees your screen via screenshots and controls your PC through native OS APIs. No browser extension needed — it works with any application.
+- `mouse_click`
+- `mouse_double_click`
+- `mouse_right_click`
+- `mouse_scroll`
+- `mouse_move`
+- `type_text`
+- `press_key`
+- `hotkey`
+- `open_path`
+- `focus_window`
+- `perform_actions`
 
 ## Requirements
 
 - Node.js 20+
-- Windows 10/11 (macOS support coming)
+- Windows 10/11
 - Claude Code or Codex CLI
-
-## Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 ## License
 
 [MIT](LICENSE)
-
----
-
-[English](README.md) | [日本語](docs/README.ja.md) | [中文](docs/README.zh-CN.md)

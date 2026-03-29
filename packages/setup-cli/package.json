@@ -12,8 +12,26 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": ["voice-control", "ai-agent", "mcp", "claude-code", "codex", "desktop-automation"],
+  "keywords": ["mcp", "vox-pilot", "setup", "cli"],
+  "author": "Vox Pilot Contributors",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vox-pilot/vox-pilot",
+    "directory": "packages/setup-cli"
+  },
+  "homepage": "https://github.com/vox-pilot/vox-pilot#readme",
+  "bugs": {
+    "url": "https://github.com/vox-pilot/vox-pilot/issues"
+  },
+  "files": [
+    "dist/**",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "tsup": "^8.0.0",
     "typescript": "^5.5.0"
